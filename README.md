@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## 使用方法
 
-1. 在 `urls.txt` 中添加需要下载的文章链接，每行一个
+1. 创建`urls.txt`并在 `urls.txt` 中添加需要下载的文章链接，每行一个
 2. 运行程序：
 
 ```bash
