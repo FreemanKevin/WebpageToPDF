@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## 使用方法
 
-1. 在 `urls.txt` 中添加需要下载的文章链接，每行一个
+1. 创建`urls.txt`并在 `urls.txt` 中添加需要下载的文章链接，每行一个
 2. 运行程序：
 
 ```bash
@@ -33,8 +33,8 @@ options:
   -h, --help            显示帮助信息并退出
   -d num, --depth num   递归深度 (默认: 3)
   -t sec, --delay sec   页面加载延迟秒数 (默认: 3)
-  -D, --debug          启用调试模式，显示详细日志
-  -v, --visible        显示浏览器窗口
+  -D, --debug           启用调试模式，显示详细日志
+  -v, --visible         显示浏览器窗口
 ```
 
 ### 使用示例
@@ -42,9 +42,9 @@ options:
 ```bash
 python main.py -d 3                     # 设置递归深度为3层
 python main.py -t 5                     # 设置页面加载延迟为5秒
-python main.py -d 2 -t 3 -D            # 递归2层，延迟3秒，显示调试信息
-python main.py -d 3 -v                 # 递归3层，显示浏览器窗口
-python main.py -D -v                   # 显示调试信息和浏览器窗口
+python main.py -d 2 -t 3 -D             # 递归2层，延迟3秒，显示调试信息
+python main.py -d 3 -v                  # 递归3层，显示浏览器窗口
+python main.py -D -v                    # 显示调试信息和浏览器窗口
 ```
 
 ## 输出结构
