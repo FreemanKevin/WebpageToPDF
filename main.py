@@ -2,6 +2,7 @@ import time
 import os
 import json
 import base64
+import traceback
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
