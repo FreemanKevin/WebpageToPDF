@@ -166,7 +166,7 @@ class WebCrawler:
                 time.sleep(1)  # 每秒检查一次
 
     def check_article_migration(self, driver):
-        """检查文章是否已迁移，如果是则获取新链接"""
+        """检查文章是否已迁移，如果是则获取并访问新链接"""
         try:
             # 检查是否存在迁移提示文本
             migration_text = driver.find_elements(By.XPATH, "//*[contains(text(), '该公众号已迁移')]")
@@ -177,29 +177,54 @@ class WebCrawler:
                     # 查找并点击"访问文章"按钮
                     article_button = driver.find_element(By.XPATH, "//a[contains(text(), '访问文章')]")
                     if article_button:
-                        self.log_success("找到'访问文章'按钮，尝试获取新链接...")
+                        self.log_success("找到'访问文章'按钮，正在跳转...")
                         
-                        # 获取按钮的href属性
+                        # 获取新链接
                         new_url = article_button.get_attribute("href")
                         if not new_url:
-                            # 如果按钮本身没有href，尝试获取父元素的href
                             parent = article_button.find_element(By.XPATH, "./..")
                             new_url = parent.get_attribute("href")
                         
                         if new_url:
-                            self.log_box(f"新链接: {new_url}")
-                            self.log_warning("请更新urls.txt中的链接后重试。")
-                            return new_url
+                            self.log_box(f"原文已迁移到新链接: {new_url}")
+                            # 直接访问新链接
+                            self.log_info("正在访问新链接...")
+                            driver.get(new_url)
+                            time.sleep(self.delay)  # 等待页面加载
+                            return True
                         else:
                             self.log_error("未能获取新的文章链接")
-                            return None
+                            return False
                 except Exception as e:
-                    self.log_error(f"获取新链接时出错: {str(e)}")
-                    return None
+                    self.log_error(f"处理文章迁移时出错: {str(e)}")
+                    return False
         except Exception as e:
             self.log_error(f"检查文章迁移时出错: {str(e)}")
-            return None
-        return None
+            return False
+        return False
+
+    def check_article_status(self, driver):
+        """检查文章状态（是否被删除或失效）"""
+        try:
+            # 检查常见的错误提示
+            error_patterns = [
+                "该内容已被发布者删除",
+                "此内容因违规无法查看",
+                "该公众号已被屏蔽",
+                "该内容已被投诉",
+                "抱歉，此内容已被删除",
+            ]
+            
+            for pattern in error_patterns:
+                elements = driver.find_elements(By.XPATH, f"//*[contains(text(), '{pattern}')]")
+                if elements:
+                    return False, pattern
+                
+            return True, None
+            
+        except Exception as e:
+            self.log_error(f"检查文章状态时出错: {str(e)}")
+            return False, str(e)
 
     def crawl_page(self, url, current_depth=0, parent_dir="pdfs"):
         """递归爬取页面"""
@@ -216,13 +241,17 @@ class WebCrawler:
             self.log_success("页面加载完成，等待延迟...")
             time.sleep(self.delay)
 
+            # 检查文章状态
+            is_valid, error_msg = self.check_article_status(self.driver)
+            if not is_valid:
+                self.log_warning(f"文章无法访问: {error_msg}")
+                self.log_box(f"已跳过无效链接: {url}")
+                return
+
             # 检查文章迁移
-            new_url = self.check_article_migration(self.driver)
-            if new_url:
-                self.log_warning("\n文章已迁移，建议更新链接后重试")
-                self.log_box(f"新链接: {new_url}")
-                self.log_error("程序将退出...")
-                sys.exit(1)
+            if self.check_article_migration(self.driver):
+                self.log_success("已成功跳转到新链接")
+                # 注意：此时driver已经在新页面上了，继续处理即可
 
             # 检查登录状态
             try:
@@ -237,10 +266,14 @@ class WebCrawler:
             page_title = self.sanitize_filename(self.get_page_title(self.driver))
             self.log_highlight(f"页面标题: {page_title}")
 
-            # 创建目录
-            save_dir = os.path.join(parent_dir, page_title)
-            os.makedirs(save_dir, exist_ok=True)
-            self.log_info(f"创建目录: {save_dir}")
+            # 如果不是最大深度，创建目录
+            if current_depth < self.max_depth:
+                save_dir = os.path.join(parent_dir, page_title)
+                os.makedirs(save_dir, exist_ok=True)
+                self.log_info(f"创建目录: {save_dir}")
+            else:
+                # 在最大深度，直接使用父目录
+                save_dir = parent_dir
 
             # 保存PDF
             if self.save_page_as_pdf(url, save_dir):
@@ -248,18 +281,17 @@ class WebCrawler:
             else:
                 self.log_error("PDF保存失败")
 
-            # 处理链接
-            if current_depth >= self.max_depth:
+            # 如果还没到最大深度，继续获取链接
+            if current_depth < self.max_depth:
+                self.log_info("开始获取页面链接...")
+                links = self.get_page_links(url)
+                self.log_highlight(f"找到 {len(links)} 个有效链接")
+
+                for i, link in enumerate(links, 1):
+                    self.log_highlight(f"\n处理链接 [{i}/{len(links)}]: {link}")
+                    self.crawl_page(link, current_depth + 1, save_dir)
+            else:
                 self.log_warning(f"已达到最大深度 {self.max_depth}，停止获取链接")
-                return
-
-            self.log_info("开始获取页面链接...")
-            links = self.get_page_links(url)
-            self.log_highlight(f"找到 {len(links)} 个有效链接")
-
-            for i, link in enumerate(links, 1):
-                self.log_highlight(f"\n处理链接 [{i}/{len(links)}]: {link}")
-                self.crawl_page(link, current_depth + 1, save_dir)
 
         except Exception as e:
             self.log_error(f"处理页面时出错 {url}: {str(e)}")
