@@ -81,11 +81,11 @@ pdfs/
 使用 clean.py 脚本可以清理以下内容：
 - 所有生成的 PDF 文件和目录（pdfs/）
 - Python 缓存文件（__pycache__/）
-- 下载的目录和文件
-- 浏览器驱动缓存
+
 
 ```bash
-python clean.py  # 执行清理
+python clean.py  -a # 清理所有
+python clean.py  -c # 清理 Python 缓存
 ```
 
 ## License
