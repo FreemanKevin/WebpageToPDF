@@ -45,8 +45,9 @@ python main.py -d 2 -t 3 -D             # 递归2层，延迟3秒，显示调试
 python main.py -d 3 -v                  # 递归3层，显示浏览器窗口
 python main.py -D -v                    # 显示调试信息和浏览器窗口
 
-# 清理环境（删除所有生成的文件和缓存）
-python clean.py                         # 清理所有生成的PDF文件和临时文件
+# 环境清理
+python clean.py -a                      # 清理所有生成的PDF文件和临时文件
+python clean.py -c                      # 只清理缓存
 ```
 
 ## 输出结构
@@ -57,18 +58,6 @@ pdfs/
     ├── 文章1.pdf
     └── 相关文章目录/
         └── 相关文章.pdf
-```
-
-## 环境清理
-
-使用 clean.py 脚本可以清理以下内容：
-- 所有生成的 PDF 文件和目录（pdfs/）
-- Python 缓存文件（__pycache__/）
-
-
-```bash
-python clean.py  -a # 清理所有
-python clean.py  -c # 清理 Python 缓存
 ```
 
 ## 注意事项
