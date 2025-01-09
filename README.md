@@ -10,11 +10,35 @@
 - 自动创建层级目录结构
 - 支持批量处理多个起始URL
 
-## 安装依赖
+## 环境配置
+
+### 1. 安装 Python 依赖
 
 ```bash
 pip install -r requirements.txt
 ```
+
+### 2. 安装 Chrome 浏览器
+
+- Windows用户：
+  1. 访问 [Chrome官方下载页面](https://www.google.com/chrome/) 下载并安装Chrome浏览器
+  2. 程序首次运行时会自动下载匹配版本的ChromeDriver，请保持网络连接
+
+- Linux用户：
+```bash
+# Ubuntu/Debian
+sudo apt install google-chrome-stable
+
+# CentOS/RHEL
+sudo yum install google-chrome-stable
+```
+
+### 3. 配置Chrome
+
+- 如果遇到ChromeDriver相关错误，可以：
+  1. 检查Chrome浏览器版本（在浏览器地址栏输入：`chrome://version/`）
+  2. 手动下载对应版本的[ChromeDriver](https://chromedriver.chromium.org/downloads)
+  3. 将ChromeDriver放入系统PATH环境变量包含的目录中
 
 ## 使用方法
 

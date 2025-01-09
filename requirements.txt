@@ -1,17 +1,14 @@
-# 核心依赖
-selenium>=4.0.0
-colorama>=0.4.6
-webdriver-manager>=4.0.0
+# 浏览器自动化核心
+selenium>=4.9.0
+webdriver-manager>=3.8.6
 
-# 浏览器自动化
-selenium-wire>=5.1.0
-chromedriver-autoinstaller>=0.6.2
+# 命令行界面
+colorama>=0.4.6
+argparse
 
 # 工具库
 urllib3>=2.0.0
-requests>=2.31.0 
+requests>=2.31.0
 
-# 清理工具
-argparse>=1.4.0
-shutil>=1.8.2
-pathlib>=1.0.1
+# 可选依赖（用于调试和开发）
+tqdm>=4.65.0  # 进度条支持
