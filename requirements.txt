@@ -1,5 +1,5 @@
 # 浏览器自动化核心
-selenium>=4.9.0
+selenium>=4.15.1
 webdriver-manager>=3.8.6
 
 # 命令行界面
@@ -7,8 +7,9 @@ colorama>=0.4.6
 argparse
 
 # 工具库
-urllib3>=2.0.0
-requests>=2.31.0
+urllib3>=2.2.2
+requests>=2.32.2
 
 # 可选依赖（用于调试和开发）
 tqdm>=4.65.0  # 进度条支持
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
