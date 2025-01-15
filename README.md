@@ -1,99 +1,35 @@
 # WebpageToPDF
 
-一个用于批量下载微信公众号文章并转换为 PDF 的工具。
+A tool for batch downloading and converting WeChat articles to PDF format.
 
-## 功能特点
 
-- 支持递归抓取文章及其引用的相关文章
-- 自动检测并处理文章迁移情况
-- 智能处理失效或被删除的文章
-- 自动创建层级目录结构
-- 支持批量处理多个起始URL
+## Usage
 
-## 环境配置
-
-### 1. 安装 Python 依赖
-
+1. Create `urls.txt` with article links (one per line)
+2. Run
 ```bash
 pip install -r requirements.txt
-```
 
-### 2. 安装 Chrome 浏览器
-
-- Windows用户：
-  1. 访问 [Chrome官方下载页面](https://www.google.com/chrome/) 下载并安装Chrome浏览器
-  2. 程序首次运行时会自动下载匹配版本的ChromeDriver，请保持网络连接
-
-- Linux用户：
-```bash
-# Ubuntu/Debian
-sudo apt install google-chrome-stable
-
-# CentOS/RHEL
-sudo yum install google-chrome-stable
-```
-
-### 3. 配置Chrome
-
-- 如果遇到ChromeDriver相关错误，可以：
-  1. 检查Chrome浏览器版本（在浏览器地址栏输入：`chrome://version/`）
-  2. 手动下载对应版本的[ChromeDriver](https://chromedriver.chromium.org/downloads)
-  3. 将ChromeDriver放入系统PATH环境变量包含的目录中
-
-## 使用方法
-
-1. 创建`urls.txt`并在 `urls.txt` 中添加需要下载的文章链接，每行一个
-2. 运行程序：
-
-```bash
 python main.py [options]
 ```
 
-### 命令行参数
-
+### Options
 ```
-options:
-  -h, --help            显示帮助信息并退出
-  -d num, --depth num   递归深度 (默认: 3)
-  -t sec, --delay sec   页面加载延迟秒数 (默认: 3)
-  -D, --debug           启用调试模式，显示详细日志
-  -v, --visible         显示浏览器窗口
+-h, --help            Show help
+-d num, --depth num   Crawl depth (default: 3)
+-t sec, --delay sec   Page load delay (default: 3)
+-D, --debug          Enable debug logs
+-v, --visible        Show browser window
 ```
 
-### 使用示例
-
+### Examples
 ```bash
-python main.py -d 3                     # 设置递归深度为3层
-python main.py -t 5                     # 设置页面加载延迟为5秒
-python main.py -d 2 -t 3 -D             # 递归2层，延迟3秒，显示调试信息
-python main.py -d 3 -v                  # 递归3层，显示浏览器窗口
-python main.py -D -v                    # 显示调试信息和浏览器窗口
+python main.py -d 3                  # Depth: 3
+python main.py -t 5                  # Delay: 5s
+python main.py -d 2 -t 3 -D         # Depth: 2, Delay: 3s, Debug mode
+python main.py -D -v                # Debug mode with browser
 
-# 环境清理
-python clean.py -a                      # 清理所有生成的PDF文件和临时文件
-python clean.py -c                      # 只清理缓存
+# Cleanup
+python clean.py -a                  # Remove all generated files
+python clean.py -c                  # Clear cache only
 ```
-
-## 输出结构
-
-```
-pdfs/
-└── 文章标题1/
-    ├── 文章1.pdf
-    └── 相关文章目录/
-        └── 相关文章.pdf
-```
-
-## 注意事项
-
-1. 确保系统已安装 Chrome 浏览器
-2. 部分文章可能需要登录才能访问
-3. 建议适当设置延迟时间，避免请求过于频繁
-4. 使用 -D 参数可以查看详细的处理日志
-5. 运行 clean.py 可以清理所有生成的文件，请谨慎使用
-
-
-
-## License
-
-[MIT License](LICENSE)
